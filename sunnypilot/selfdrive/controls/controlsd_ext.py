@@ -44,6 +44,22 @@ class ControlsExt:
     # MADS not available, use stock state to engage
     return bool(sm['selfdriveState'].active)
 
+  def get_long_active(self, sm: messaging.SubMaster, CC_enabled: bool) -> bool:
+    """Determine if longitudinal control should be active, considering MADS state."""
+    # Check for override events
+    override = any(e.overrideLongitudinal for e in sm['onroadEvents'])
+    if override:
+      return False
+    
+    # If MADS is available and enabled, allow longitudinal control even without experimental mode
+    ss_sp = sm['selfdriveStateSP']
+    if ss_sp.mads.available and ss_sp.mads.enabled:
+      # MADS enables longitudinal control via LFA button
+      return CC_enabled
+    
+    # Otherwise, use the standard check (requires experimental mode)
+    return CC_enabled and self.CP.openpilotLongitudinalControl
+
   @staticmethod
   def get_lead_data(ld: log.RadarState.LeadData) -> dict:
     return {

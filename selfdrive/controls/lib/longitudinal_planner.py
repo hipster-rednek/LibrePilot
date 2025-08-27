@@ -93,7 +93,9 @@ class LongitudinalPlanner(LongitudinalPlannerSP):
     return x, v, a, j, throttle_prob
 
   def update(self, sm):
-    self.mode = 'blended' if sm['selfdriveState'].experimentalMode else 'acc'
+    # Use blended mode if experimental mode OR if MADS is enabling longitudinal control
+    mads_long = sm['selfdriveStateSP'].mads.available and sm['selfdriveStateSP'].mads.enabled
+    self.mode = 'blended' if (sm['selfdriveState'].experimentalMode or mads_long) else 'acc'
     if not self.mlsim:
       self.mpc.mode = self.mode
     LongitudinalPlannerSP.update(self, sm)
@@ -116,7 +118,10 @@ class LongitudinalPlanner(LongitudinalPlannerSP):
     force_slow_decel = sm['controlsState'].forceDecel
 
     # Reset current state when not engaged, or user is controlling the speed
-    reset_state = long_control_off if self.CP.openpilotLongitudinalControl else not sm['selfdriveState'].enabled
+    # Consider MADS state for longitudinal control
+    mads_long = sm['selfdriveStateSP'].mads.available and sm['selfdriveStateSP'].mads.enabled
+    should_do_long = self.CP.openpilotLongitudinalControl or mads_long
+    reset_state = long_control_off if should_do_long else not sm['selfdriveState'].enabled
     # PCM cruise speed may be updated a few cycles later, check if initialized
     reset_state = reset_state or not v_cruise_initialized
 
