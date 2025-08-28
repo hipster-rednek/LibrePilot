@@ -46,13 +46,14 @@ class VCruiseHelper(VCruiseHelperSP):
   def update_v_cruise(self, CS, enabled, is_metric):
     self.v_cruise_kph_last = self.v_cruise_kph
 
-    if CS.cruiseState.available:
-      if not self.CP.pcmCruise:
-        # if stock cruise is completely disabled, then we can use our own set speed logic
-        self._update_v_cruise_non_pcm(CS, enabled, is_metric)
-        self.v_cruise_cluster_kph = self.v_cruise_kph
-        self.update_button_timers(CS, enabled)
-      else:
+    # If stock PCM cruise is not used (e.g. non-SCC platforms), always use our own set speed logic
+    if not self.CP.pcmCruise:
+      self._update_v_cruise_non_pcm(CS, enabled, is_metric)
+      self.v_cruise_cluster_kph = self.v_cruise_kph
+      self.update_button_timers(CS, enabled)
+    else:
+      # Using stock PCM cruise: mirror the car's set speed when available
+      if CS.cruiseState.available:
         self.v_cruise_kph = CS.cruiseState.speed * CV.MS_TO_KPH
         self.v_cruise_cluster_kph = CS.cruiseState.speedCluster * CV.MS_TO_KPH
         if CS.cruiseState.speed == 0:
@@ -61,9 +62,9 @@ class VCruiseHelper(VCruiseHelperSP):
         elif CS.cruiseState.speed == -1:
           self.v_cruise_kph = -1
           self.v_cruise_cluster_kph = -1
-    else:
-      self.v_cruise_kph = V_CRUISE_UNSET
-      self.v_cruise_cluster_kph = V_CRUISE_UNSET
+      else:
+        self.v_cruise_kph = V_CRUISE_UNSET
+        self.v_cruise_cluster_kph = V_CRUISE_UNSET
 
   def _update_v_cruise_non_pcm(self, CS, enabled, is_metric):
     # handle button presses. TODO: this should be in state_control, but a decelCruise press

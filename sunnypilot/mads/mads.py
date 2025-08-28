@@ -86,6 +86,11 @@ class ModularAssistiveDrivingSystem:
     return False
 
   def get_wrong_car_mode(self, alert_only: bool) -> None:
+    # In MADS, suppress wrongCarMode entirely to allow speed control and engagement without stock ACC
+    if self.enabled_toggle or self.allow_always or self.no_main_cruise:
+      self.events.remove(EventName.wrongCarMode)
+      return
+
     if alert_only:
       if self.events.has(EventName.wrongCarMode):
         self.replace_event(EventName.wrongCarMode, EventNameSP.wrongCarModeAlertOnly)
