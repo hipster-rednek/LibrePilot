@@ -168,10 +168,17 @@ class Controls(ControlsExt, ModelStateBase):
       CC.angularVelocity = self.calibrated_pose.angular_velocity.xyz.tolist()
 
     # Check if we should be doing longitudinal control (either via experimental mode or MADS)
-    should_do_long = self.CP.openpilotLongitudinalControl or (self.sm['selfdriveStateSP'].mads.available and self.sm['selfdriveStateSP'].mads.enabled)
+    mads_long = self.sm['selfdriveStateSP'].mads.available and self.sm['selfdriveStateSP'].mads.enabled
+    should_do_long = self.CP.openpilotLongitudinalControl or mads_long
     CC.cruiseControl.override = CC.enabled and not CC.longActive and should_do_long
-    CC.cruiseControl.cancel = CS.cruiseState.enabled and (not CC.enabled or not self.CP.pcmCruise)
-    CC.cruiseControl.resume = CC.enabled and CS.cruiseState.standstill and not self.sm['longitudinalPlan'].shouldStop
+
+    # When MADS is enabling longitudinal, do not send cancel/resume to stock ACC
+    if mads_long:
+      CC.cruiseControl.cancel = False
+      CC.cruiseControl.resume = False
+    else:
+      CC.cruiseControl.cancel = CS.cruiseState.enabled and (not CC.enabled or not self.CP.pcmCruise)
+      CC.cruiseControl.resume = CC.enabled and CS.cruiseState.standstill and not self.sm['longitudinalPlan'].shouldStop
 
     hudControl = CC.hudControl
     hudControl.setSpeed = float(CS.vCruiseCluster * CV.KPH_TO_MS)

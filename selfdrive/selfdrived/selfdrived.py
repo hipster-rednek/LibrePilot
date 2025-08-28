@@ -510,7 +510,8 @@ class SelfdriveD(CruiseHelper):
     ss.active = self.active
     ss.state = self.state_machine.state
     ss.engageable = not self.events.contains(ET.NO_ENTRY)
-    ss.experimentalMode = self.experimental_mode
+    # Force experimentalMode true while MADS is enabled to align UI/logic
+    ss.experimentalMode = self.experimental_mode or (self.mads.enabled and self.mads.enabled_toggle)
     ss.personality = self.personality
 
     ss.alertText1 = self.AM.current_alert.alert_text_1

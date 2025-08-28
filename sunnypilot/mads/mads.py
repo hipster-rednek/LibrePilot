@@ -151,8 +151,8 @@ class ModularAssistiveDrivingSystem:
 
     for be in CS.buttonEvents:
       if be.type == ButtonType.cancel:
-        if not self.selfdrive.enabled and self.selfdrive.enabled_prev:
-          self.events_sp.add(EventNameSP.manualLongitudinalRequired)
+        # Do not warn about ACC OFF while using MADS; suppress manualLongitudinalRequired
+        pass
       if be.type == ButtonType.lkas and be.pressed and (CS.cruiseState.available or self.allow_always):
         if self.enabled:
           if self.selfdrive.enabled:
