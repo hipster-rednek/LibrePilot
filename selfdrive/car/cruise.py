@@ -43,10 +43,11 @@ class VCruiseHelper(VCruiseHelperSP):
   def v_cruise_initialized(self):
     return self.v_cruise_kph != V_CRUISE_UNSET
 
-  def update_v_cruise(self, CS, enabled, is_metric):
+  def update_v_cruise(self, CS, enabled, is_metric, mads_enabled_long=False):
     self.v_cruise_kph_last = self.v_cruise_kph
 
-    if CS.cruiseState.available:
+    # Allow cruise control updates if cruise is available OR MADS is enabled for longitudinal control
+    if CS.cruiseState.available or mads_enabled_long:
       if not self.CP.pcmCruise:
         # if stock cruise is completely disabled, then we can use our own set speed logic
         self._update_v_cruise_non_pcm(CS, enabled, is_metric)
