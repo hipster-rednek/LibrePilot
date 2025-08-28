@@ -216,10 +216,21 @@ class Car:
     if can_rcv_valid and REPLAY:
       self.can_log_mono_time = messaging.log_from_bytes(can_strs[0]).logMonoTime
 
-    self.v_cruise_helper.update_v_cruise(CS, self.sm['carControl'].enabled, self.is_metric)
+    # Determine if MADS is providing longitudinal control (treat like experimental)
+    mads_long_enabled = False
+    try:
+      ss_sp = self.sm['selfdriveStateSP'] if 'selfdriveStateSP' in self.sm else None
+      if ss_sp is not None and getattr(ss_sp.mads, 'available', False):
+        mads_long_enabled = bool(getattr(ss_sp.mads, 'enabled', False))
+    except Exception:
+      mads_long_enabled = False
+
+    self.v_cruise_helper.update_v_cruise(CS, self.sm['carControl'].enabled, self.is_metric, mads_long_enabled)
     if self.sm['carControl'].enabled and not self.CC_prev.enabled:
       # Use CarState w/ buttons from the step selfdrived enables on
-      self.v_cruise_helper.initialize_v_cruise(self.CS_prev, self.experimental_mode, self.dynamic_experimental_control)
+      # Treat MADS-enabled longitudinal like experimental for initial set speed
+      initial_exp = self.experimental_mode or mads_long_enabled
+      self.v_cruise_helper.initialize_v_cruise(self.CS_prev, initial_exp, self.dynamic_experimental_control)
 
     # TODO: mirror the carState.cruiseState struct?
     CS.vCruise = float(self.v_cruise_helper.v_cruise_kph)

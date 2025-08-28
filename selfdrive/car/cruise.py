@@ -43,16 +43,19 @@ class VCruiseHelper(VCruiseHelperSP):
   def v_cruise_initialized(self):
     return self.v_cruise_kph != V_CRUISE_UNSET
 
-  def update_v_cruise(self, CS, enabled, is_metric):
+  def update_v_cruise(self, CS, enabled, is_metric, mads_long_enabled: bool = False):
     self.v_cruise_kph_last = self.v_cruise_kph
 
-    if CS.cruiseState.available:
-      if not self.CP.pcmCruise:
-        # if stock cruise is completely disabled, then we can use our own set speed logic
-        self._update_v_cruise_non_pcm(CS, enabled, is_metric)
-        self.v_cruise_cluster_kph = self.v_cruise_kph
-        self.update_button_timers(CS, enabled)
-      else:
+    # Treat MADS-enabled longitudinal as non-PCM so we manage set speed internally
+    use_non_pcm = (not self.CP.pcmCruise) or bool(mads_long_enabled)
+
+    if use_non_pcm:
+      # Use internal logic regardless of stock cruise availability
+      self._update_v_cruise_non_pcm(CS, enabled, is_metric)
+      self.v_cruise_cluster_kph = self.v_cruise_kph
+      self.update_button_timers(CS, enabled)
+    else:
+      if CS.cruiseState.available:
         self.v_cruise_kph = CS.cruiseState.speed * CV.MS_TO_KPH
         self.v_cruise_cluster_kph = CS.cruiseState.speedCluster * CV.MS_TO_KPH
         if CS.cruiseState.speed == 0:
@@ -61,9 +64,9 @@ class VCruiseHelper(VCruiseHelperSP):
         elif CS.cruiseState.speed == -1:
           self.v_cruise_kph = -1
           self.v_cruise_cluster_kph = -1
-    else:
-      self.v_cruise_kph = V_CRUISE_UNSET
-      self.v_cruise_cluster_kph = V_CRUISE_UNSET
+      else:
+        self.v_cruise_kph = V_CRUISE_UNSET
+        self.v_cruise_cluster_kph = V_CRUISE_UNSET
 
   def _update_v_cruise_non_pcm(self, CS, enabled, is_metric):
     # handle button presses. TODO: this should be in state_control, but a decelCruise press
