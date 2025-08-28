@@ -188,7 +188,11 @@ void TogglesPanel::updateToggles() {
     capnp::FlatArrayMessageReader cmsg(aligned_buf.align(cp_bytes.data(), cp_bytes.size()));
     cereal::CarParams::Reader CP = cmsg.getRoot<cereal::CarParams>();
 
-    if (hasLongitudinalControl(CP)) {
+    // Check if MADS is enabled for longitudinal control
+    bool mads_enabled = params.getBool("Mads");
+    bool has_long_control = hasLongitudinalControl(CP, mads_enabled);
+    
+    if (has_long_control) {
       // normal description and toggle
       experimental_mode_toggle->setEnabled(true);
       experimental_mode_toggle->setDescription(e2e_description);

@@ -85,7 +85,8 @@ void DeveloperPanel::updateToggles(bool _offroad) {
      */
     experimentalLongitudinalToggle->setVisible(CP.getAlphaLongitudinalAvailable() && !is_release);
 
-    longManeuverToggle->setEnabled(hasLongitudinalControl(CP) && _offroad);
+    bool mads_enabled = Params().getBool("Mads");
+    longManeuverToggle->setEnabled(hasLongitudinalControl(CP, mads_enabled) && _offroad);
   } else {
     longManeuverToggle->setEnabled(false);
     experimentalLongitudinalToggle->setVisible(false);

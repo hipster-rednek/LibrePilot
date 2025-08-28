@@ -26,7 +26,9 @@ ExperimentalButton::ExperimentalButton(QWidget *parent) : experimental_mode(fals
 
 void ExperimentalButton::changeMode() {
   const auto cp = (*uiState()->sm)["carParams"].getCarParams();
-  bool can_change = hasLongitudinalControl(cp) && params.getBool("ExperimentalModeConfirmed");
+  const auto mads = (*uiState()->sm)["selfdriveStateSP"].getSelfdriveStateSP().getMads();
+  bool mads_enabled = mads.getEnabled();
+  bool can_change = hasLongitudinalControl(cp, mads_enabled) && params.getBool("ExperimentalModeConfirmed");
   if (can_change) {
     params.putBool("ExperimentalMode", !experimental_mode);
   }
@@ -34,7 +36,13 @@ void ExperimentalButton::changeMode() {
 
 void ExperimentalButton::updateState(const UIState &s) {
   const auto cs = (*s.sm)["selfdriveState"].getSelfdriveState();
-  bool eng = cs.getEngageable() || cs.getEnabled();
+  const auto cp = (*s.sm)["carParams"].getCarParams();
+  const auto mads = (*s.sm)["selfdriveStateSP"].getSelfdriveStateSP().getMads();
+  bool mads_enabled = mads.getEnabled();
+  
+  // Button is engageable if either the standard conditions are met OR MADS is enabled with longitudinal control
+  bool eng = cs.getEngageable() || cs.getEnabled() || (mads_enabled && hasLongitudinalControl(cp, mads_enabled));
+  
   if ((cs.getExperimentalMode() != experimental_mode) || (eng != engageable)) {
     engageable = eng;
     experimental_mode = cs.getExperimentalMode();

@@ -31,7 +31,8 @@ void HyundaiSettings::updateSettings() {
     capnp::FlatArrayMessageReader cmsg(aligned_buf.align(cp_bytes.data(), cp_bytes.size()));
     cereal::CarParams::Reader CP = cmsg.getRoot<cereal::CarParams>();
 
-    has_longitudinal_control = hasLongitudinalControl(CP);
+    bool mads_enabled = Params().getBool("Mads");
+    has_longitudinal_control = hasLongitudinalControl(CP, mads_enabled);
   } else {
     has_longitudinal_control = false;
   }

@@ -203,6 +203,16 @@ bool hasLongitudinalControl(const cereal::CarParams::Reader &car_params) {
              : car_params.getOpenpilotLongitudinalControl();
 }
 
+bool hasLongitudinalControl(const cereal::CarParams::Reader &car_params, bool mads_enabled) {
+  // When MADS is enabled, longitudinal control is available even without experimental mode
+  if (mads_enabled) {
+    return true;
+  }
+  
+  // Otherwise, use the standard check
+  return hasLongitudinalControl(car_params);
+}
+
 // ParamWatcher
 
 ParamWatcher::ParamWatcher(QObject *parent) : QObject(parent) {
