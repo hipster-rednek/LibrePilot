@@ -51,13 +51,13 @@ class ControlsExt:
     if override:
       return False
     
-    # If MADS is available and enabled, allow longitudinal control even without experimental mode
+    # If MADS is available and enabled, allow longitudinal control unconditionally (acts like experimental mode)
+    # This ensures pressing speed control buttons while in MADS engages longitudinal without showing unavailable warnings.
     ss_sp = sm['selfdriveStateSP']
     if ss_sp.mads.available and ss_sp.mads.enabled:
-      # MADS enables longitudinal control via LFA button
-      return CC_enabled
+      return True
     
-    # Otherwise, use the standard check (requires experimental mode)
+    # Otherwise, use the standard check (requires experimental mode / openpilotLongitudinalControl)
     return CC_enabled and self.CP.openpilotLongitudinalControl
 
   @staticmethod
