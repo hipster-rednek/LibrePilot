@@ -701,6 +701,11 @@ class CAR(Platforms):
     CarSpecs(mass=2258, wheelbase=2.95, steerRatio=14.14),
     flags=HyundaiFlags.RADAR_SCC,
   )
+  GENESIS_GV80_2021 = HyundaiCanFDPlatformConfig(
+    [HyundaiCarDocs("Genesis GV80 (with HDA II) 2021", "Highway Driving Assist II", car_parts=CarParts.common([CarHarness.hyundai_q]))],
+    CarSpecs(mass=2258, wheelbase=2.95, steerRatio=14.14),
+    flags=HyundaiFlags.RADAR_SCC | HyundaiFlags.CANFD_HDA2 | HyundaiFlags.SEND_LFA,
+  )
   GENESIS_GV70_EV_1ST_GEN = HyundaiCanFDPlatformConfig(
     [HyundaiCarDocs("Genesis GV70 EV 2020-2023", "All", car_parts=CarParts.common([CarHarness.hyundai_m]))],
     CarSpecs(mass=2230, wheelbase=2.87, steerRatio=14.6),
