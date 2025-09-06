@@ -50,7 +50,7 @@
       "edescr": "More fine steering at higher values — 0-50 recommended",
       "min": 0,
       "max": 1000,
-      "default": 100,
+      "default": 125,
       "unit": 10
     },
     {
@@ -63,7 +63,7 @@
       "edescr": "Steering Response Speed (Instant Reaction) — 140 Recommended",
       "min": 0,
       "max": 200,
-      "default": 100,
+      "default": 72,
       "unit": 1
     },
     {
@@ -76,7 +76,7 @@
       "edescr": "Steering Accumulated Error Correction — 20 Recommended",
       "min": 0,
       "max": 200,
-      "default": 10,
+      "default": 5,
       "unit": 1
     },
     {
@@ -193,7 +193,7 @@
       "edescr": "Maximum Steering Torque — Use the largest value among 270/384/409 that does not cause errors",
       "min": 0,
       "max": 30000,
-      "default": 0,
+      "default": 409,
       "unit": 1
     },
     {
@@ -557,7 +557,7 @@
       "edescr": "Higher value: slow curve speed",
       "min": 50,
       "max": 300,
-      "default": 100,
+      "default": 75,
       "unit": 5
     },
     {
@@ -570,7 +570,7 @@
       "edescr": "Higher value: more speed down",
       "min": 50,
       "max": 300,
-      "default": 10,
+      "default": 100,
       "unit": 1
     },
     {
@@ -934,7 +934,7 @@
       "edescr": "Reboot required",
       "min": 0,
       "max": 1,
-      "default": 0,
+      "default": 1,
       "unit": 1
     },
     {
@@ -1351,7 +1351,7 @@
       "edescr": "0:HDA1, 1: HDA2, 2: HDA2+BSM",
       "min": 0,
       "max": 2,
-      "default": 0,
+      "default": 2,
       "unit": 1
     },
     {
@@ -1377,7 +1377,7 @@
       "edescr": "-1: SCC Radar(SCC Always On), 0: SCC Radar\n, 1: Radar Track Enabled, 2: Radar Track Enabled(SCC Always On)\n 3:Radar Track Eanbled(Cutin detect and etc)",
       "min": -1,
       "max": 3,
-      "default": 0,
+      "default": 1,
       "unit": 1
     },
     {
