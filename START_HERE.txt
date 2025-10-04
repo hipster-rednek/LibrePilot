@@ -1,0 +1,87 @@
+================================================================================
+  comma 3X - APN and Canadian Roaming Fix
+================================================================================
+
+QUICK ANSWERS:
+
+Q: What APN should I use?
+A: EMPTY/BLANK - the device auto-configures
+
+Q: How do I enable roaming in Canada?
+A: Run: sudo python3 enable_roaming.py
+
+Q: My device won't connect at all?
+A: Run: sudo python3 fix_apn_python.py
+
+================================================================================
+  SCRIPTS TO RUN
+================================================================================
+
+FIX APN ISSUES (device won't connect):
+  sudo python3 fix_apn_python.py
+  OR
+  sudo bash apply_apn_fix.sh
+
+ENABLE ROAMING IN CANADA (US SIM roaming on Canadian networks):
+  sudo python3 enable_roaming.py
+  OR  
+  sudo bash enable_roaming.sh
+
+DISABLE ROAMING (return to home network only):
+  sudo python3 disable_roaming.py
+  OR
+  sudo bash disable_roaming.sh
+
+CHECK STATUS ONLY (no changes):
+  bash fix_apn_connection.sh
+
+================================================================================
+  DOCUMENTATION TO READ
+================================================================================
+
+START WITH ONE OF THESE:
+  • README_MASTER.md - Overview of everything (START HERE!)
+  • QUICK_FIX_SUMMARY.md - Quick APN fix reference
+  • ROAMING_IN_CANADA.md - Complete roaming guide
+
+DETAILED GUIDES:
+  • README_APN_FIX.md - Complete APN troubleshooting
+  • APN_TROUBLESHOOTING_GUIDE.md - Technical deep dive
+
+================================================================================
+  QUICK COMMANDS
+================================================================================
+
+Check modem status:
+  mmcli -m any
+
+Check if roaming is enabled:
+  cat /data/params/d/GsmRoaming
+
+Check NetworkManager connections:
+  nmcli connection show
+
+Check active connections:
+  nmcli connection show --active
+
+Restart cellular connection:
+  nmcli connection down lte && nmcli connection up lte
+
+================================================================================
+  WHAT YOU TOLD ME
+================================================================================
+
+1. Your device is a comma 3X
+2. It won't connect to cellular
+3. It worked before (specifically roaming in Canada)
+
+SOLUTION:
+1. The APN should be EMPTY (blank) for auto-configuration
+2. Roaming must be ENABLED to use Canadian networks
+3. Run the scripts above to fix both issues
+
+================================================================================
+
+Next step: Read README_MASTER.md or just run the fix scripts!
+
+================================================================================
